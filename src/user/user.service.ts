@@ -25,4 +25,15 @@ export class UserService {
     }
     throw new UnauthorizedException('Kullanıcı adı veya şifre hatalı');
   }
+  async updateScore(userId: number, newScore: number) {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (user) {
+      // Sadece daha yüksek bir skor yaparsa güncelle (High Score)
+      if (newScore > user.highScore) {
+        user.highScore = newScore;
+        return await this.userRepository.save(user);
+      }
+    }
+    return user;
+  }
 }
