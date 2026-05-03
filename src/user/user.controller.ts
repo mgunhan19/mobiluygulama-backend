@@ -13,4 +13,8 @@ export class UserController {
 async login(@Body() body: any) {
   return this.userService.login(body.username, body.password);
 }
+@Post('update-score')
+async updateScore(@Body() body: { userId: number, score: number }) {
+  return this.userService.updateScore(body.userId, body.score);
+}
 }
