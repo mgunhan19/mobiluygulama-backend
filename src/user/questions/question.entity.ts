@@ -1,7 +1,9 @@
+// src/user/questions/question.entity.ts
+
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('questions')
-export class Question { 
+export class Question {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -22,4 +24,7 @@ export class Question {
 
   @Column()
   correctAnswer!: string;
+
+  @Column({ default: 1 }) // Yeni eklenen sütun: Sorunun seviyesi
+  level!: number;
 }

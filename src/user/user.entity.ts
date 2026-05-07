@@ -1,16 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';//typeorm'dan Entity, PrimaryGeneratedColumn ve Column dekoratörlerini içe aktarıyoruz
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ unique: true })
-  username: string;
+  username!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
   @Column({ default: 0 })
-  highScore: number; // Yarışma puanı için şimdiden ekliyoruz
+  highScore!: number; // Yarışma puanını kaydetmek için yeni bir alan ekledik
+
+  @Column({ default: 1 })
+  level!: number; // Kullanıcının seviyesini tutmak için yeni bir alan ekledik
 }

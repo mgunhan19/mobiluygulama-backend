@@ -5,8 +5,8 @@ import { QuestionService } from './question.service';
 import { QuestionController } from './question.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Question])],
-  providers: [QuestionService],
-  controllers: [QuestionController],
+  imports: [TypeOrmModule.forFeature([Question])],// Veritabanında Question tablosunu kullanmak için TypeOrmModule'a ekliyoruz
+  providers: [QuestionService],// Mantık işlemlerini yapan sınıf
+  controllers: [QuestionController],// API isteklerini karşılayan sınıf
 })
-export class QuestionModule {}
+export class QuestionModule {}//    Soru ile ilgili işlemleri yapacak modül sınıfı

@@ -4,8 +4,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // BU SATIR KRİTİK: Mobil cihazın bağlanması için şart!
-  app.enableCors(); 
+ 
+  app.enableCors(); // CORS'u etkinleştirerek farklı kaynaklardan gelen isteklerin kabul edilmesini sağlıyoruz
   
   // 0.0.0.0 ekleyerek tüm ağ cihazlarına kapıyı açıyoruz
   await app.listen(3000, '0.0.0.0'); 
