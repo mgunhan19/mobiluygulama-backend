@@ -1,13 +1,13 @@
 import { Controller, Post, Body, Get, Query, Patch, Param, ParseIntPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 
-@Controller('auth') // Burası 'auth' olmalı çünkü kullanıcıyla ilgili işlemler burada gerçekleşecek
+@Controller('auth')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('register') // Burası 'register' olmalı
+  @Post('register')
   register(@Body() body: any) {
-    return this.userService.register(body);// Kullanıcı kaydı için gerekli bilgileri body üzerinden alıyoruz
+    return this.userService.register(body);
   }
 
   @Post('login')
@@ -44,5 +44,11 @@ export class UserController {
     }
     const { password, ...safeUser } = user;
     return safeUser;
+  }
+
+  // Liderlik tablosu verilerini döndüren GET endpoint'i
+  @Get('leaderboard')
+  async getLeaderboard() {
+    return this.userService.getLeaderboard();
   }
 }
