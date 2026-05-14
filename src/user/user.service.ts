@@ -3,13 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 
-@Injectable()
+@Injectable()// Kullanıcı ile ilgili işlemleri yapacak servis sınıfı
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private userRepository: Repository<User>,// Repository'yi constructor üzerinden enjekte ediyoruz
   ) {}
 
+  //  Kullanıcıyı veri tabanına yazar
   async register(userData: Partial<User>): Promise<User> {
     const newUser = this.userRepository.create({
       ...userData,
@@ -18,6 +19,7 @@ export class UserService {
     return await this.userRepository.save(newUser);
   }
 
+  //  Kullanıcıyı bulur ve şifreyi kontrol eder
   async login(username: string, password: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { username } });
     
@@ -30,6 +32,7 @@ export class UserService {
   async updateScore(userId: number, newScore: number) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (user) {
+      // Sadece daha yüksek bir skor yaparsa güncelle (High Score)
       if (newScore > user.highScore) {
         user.highScore = newScore;
         return await this.userRepository.save(user);
@@ -49,6 +52,7 @@ export class UserService {
       return user;
     }
 
+    // Sadece kaydedilmiş seviyeden yüksekse güncelle
     if (newLevel > user.level) {
       await this.userRepository.update(user.id, { level: newLevel });
       return await this.findById(user.id);
