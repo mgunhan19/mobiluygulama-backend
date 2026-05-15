@@ -10,13 +10,10 @@ import { QuestionModule } from './user/questions/question.module'; // QuestionMo
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: '1905.1905',
-      database: 'bildin_bildin',
+      url: process.env.DATABASE_URL || 'postgresql://postgres:1905.1905@localhost:5432/bildin_bildin',
       entities: [User, Question], // Artık yolu doğru bulduğu için hata vermeyecek
       synchronize: true, 
+      ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
     }),
     UserModule,
     QuestionModule,
