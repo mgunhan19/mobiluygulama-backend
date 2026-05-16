@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import* as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -11,21 +12,23 @@ export class UserService {
   ) {}
 
   async register(userData: Partial<User>): Promise<User> {
-    const newUser = this.userRepository.create({
-      ...userData,
-      level: userData.level ?? 1,
-    });
-    return await this.userRepository.save(newUser);
-  }
+  const hashedPassword = await bcrypt.hash(userData.password!, 10);
+  const newUser = this.userRepository.create({
+    ...userData,
+    password: hashedPassword,
+    level: userData.level ?? 1,
+  });
+  return await this.userRepository.save(newUser);
+}
 
   async login(username: string, password: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { username } });
-    
-    if (user && user.password === password) {
-      return user;
-    }
-    throw new UnauthorizedException('Kullanıcı adı veya şifre hatalı');
+  const user = await this.userRepository.findOne({ where: { username } });
+  
+  if (user && await bcrypt.compare(password, user.password)) {
+    return user;
   }
+  throw new UnauthorizedException('Kullanıcı adı veya şifre hatalı');
+}
 
   async updateScore(userId: number, newScore: number) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
