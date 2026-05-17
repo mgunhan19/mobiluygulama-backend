@@ -22,13 +22,30 @@ export class UserService {
 }
 
   async login(username: string, password: string): Promise<User> {
-  const user = await this.userRepository.findOne({ where: { username } });
-  
-  if (user && await bcrypt.compare(password, user.password)) {
-    return user;
+    const user = await this.userRepository.findOne({ where: { username } });
+    
+    if (user) {
+      // Şifre bcrypt ile şifrelenmiş mi kontrol et (bcrypt hash'leri $ ile başlar)
+      const isEncrypted = user.password.startsWith('$2b$') || user.password.startsWith('$2a$');
+
+      if (isEncrypted) {
+        // Yeni sistem (şifrelenmiş) kullanıcılar
+        if (await bcrypt.compare(password, user.password)) {
+          return user;
+        }
+      } else {
+        // Eski sistem (şifrelenmemiş düz metin) kullanıcılar
+        if (password === user.password) {
+          // Kullanıcı doğru şifre girdiyse, hesabını yeni güvenli sisteme geçirelim (veritabanını güncelleyelim)
+          user.password = await bcrypt.hash(password, 10);
+          await this.userRepository.save(user);
+          return user;
+        }
+      }
+    }
+    
+    throw new UnauthorizedException('Kullanıcı adı veya şifre hatalı');
   }
-  throw new UnauthorizedException('Kullanıcı adı veya şifre hatalı');
-}
 
   async updateScore(userId: number, newScore: number) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
